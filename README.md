@@ -22,9 +22,9 @@ Personal Notes
 
 ### https://www.kaggle.com/code/siddhvr/lmsys-cahpp-llama3-8b-inference-baseline
 
-使用LLM（大型语言模型）Llama 3和机器学习算法（如LightGBM）进行模型融合（-模型融合是一种策略，目的是将多个模型的预测结果结合起来，以提高整体的预测准确性或性能。这种方法背后的原理基于这样一个假设：不同的模型可能从数据中学习到不同的特征和模式，通过合理地结合这些模型的预测，可以获得比任何单个模型都更好的结果。-）,预测聊天机器人对话结果。在一个NLP（自然语言处理）任务上应用了两种不同的方法，最终将这两种方法的预测结果进行加权融合。
+使用LLM（大型语言模型）Llama 3和机器学习算法（如LightGBM）进行模型融合（不同的模型可能从数据中学习到不同的特征和模式，通过合理地结合这些模型的预测，可以获得比任何单个模型都更好的结果）,预测聊天机器人对话结果。具体实现就是应用两种不同的方法，再把这两种方法的预测结果进行加权融合。
 
-1. **环境配置与库导入：** 包括`transformers`, `tokenizers`, `bitsandbytes`, 和`peft`，使用预训练的语言模型和进行文本处理。
+1. **环境配置与库导入：** 包括`transformers`, `tokenizers`, `bitsandbytes`, `peft`之类，使用预训练的语言模型和进行文本处理。
 
 2. **数据预处理：** 将字符串列表转换为单个字符串并准备模型所需的格式。 
 
@@ -32,6 +32,7 @@ Personal Notes
 
 4. **特征提取与模型预测：** 对于LightGBM部分，用`CountVectorizer`从训练和测试文本中提取特征，然后加载LightGBM模型，对测试集做预测。对于Llama模型，用AutoTokenizer对测试数据做标记化，然后在两个GPU上并行运行模型生成预测。
 
-5. **融合预测结果：** 根据预设的权重将来自LightGBM和Llama模型的预测结果进行了加权融合
-
-
+5. **融合预测结果：** 把来自LightGBM和Llama模型的预测结果进行了加权融合
+```python
+preds = 0.2 * lgb_preds + 0.8 * llama_preds
+```
