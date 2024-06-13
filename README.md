@@ -66,9 +66,23 @@ print(test['text'][0])
 ```
 
 3. **模型加载与配置：** 使用`transformers`库从一个预训练的Llama模型加载了一个用于序列分类的模型配置，并使用`BitsAndBytesConfig`对模型进行了性能优化的配置。为两个不同的GPU配置了两个模型实例，并且加载了预先训练好的权重。
+```python
+# 加载AutoTokenizer进行文本的标记化
+tokenizer = AutoTokenizer.from_pretrained(MODEL_NAME)
 
+# 配置BitsAndBytes以优化模型加载和计算，实现模型的内存高效处理
+bnb_config = BitsAndBytesConfig(load_in_8bit=True, bnb_8bit_compute_dtype=torch.float16, bnb_8bit_use_double_quant=False)
+
+# 根据配置和模型路径加载Llama模型
+base_model_0 = LlamaForSequenceClassification.from_pretrained(MODEL_NAME, num_labels=3, torch_dtype=torch.float16, quantization_config=bnb_config, device_map='cuda:0')
+base_model_0.config.pad_token_id = tokenizer.pad_token_id
+```
 4. **特征提取与模型预测：** 对于LightGBM部分，用`CountVectorizer`从训练和测试文本中提取特征，然后加载LightGBM模型，对测试集做预测。对于Llama模型，用AutoTokenizer对测试数据做标记化，然后在两个GPU上并行运行模型生成预测。
-
+```python
+tokens = tokenizer(test['text'].tolist(), padding='max_length', max_length=MAX_LENGTH, truncation=True, return_tensors='pt')
+INPUT_IDS = tokens['input_ids'].to(DEVICE, dtype=torch.int32)
+ATTENTION_MASKS = tokens['attention_mask'].to(DEVICE, dtype=torch.int32)
+```
 5. **融合预测结果：** 把来自LightGBM和Llama模型的预测结果进行了加权融合
 ```python
 preds = 0.2 * lgb_preds + 0.8 * llama_preds
