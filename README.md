@@ -1,8 +1,10 @@
 # KaggleLearning
 Personal Notes
 
+## LMSYS - Chatbot Arena Human Preference Predictions
+预测在两个大型语言模型（LLMs）驱动的聊天机器人之间的正面交锋中，用户最可能偏好哪种回答，确保LLM生成的回应能够与用户的偏好相符合。
 
-##  https://www.kaggle.com/code/awsaf49/lmsys-kerasnlp-starter
+###  https://www.kaggle.com/code/awsaf49/lmsys-kerasnlp-starter
 
 很基础很详细的一些解说，顺着跑了一遍。
 
@@ -18,9 +20,9 @@ Personal Notes
 
 6. **模型预测和提交文件的准备**（加载最佳模型进行预测，准备提交到竞赛平台的文件）
 
-## https://www.kaggle.com/code/siddhvr/lmsys-cahpp-llama3-8b-inference-baseline
+### https://www.kaggle.com/code/siddhvr/lmsys-cahpp-llama3-8b-inference-baseline
 
-使用LLM（大型语言模型）Llama 3和机器学习算法（如LightGBM）进行模型融合,预测聊天机器人对话结果。在一个NLP（自然语言处理）任务上应用了两种不同的方法，最终将这两种方法的预测结果进行加权融合。
+使用LLM（大型语言模型）Llama 3和机器学习算法（如LightGBM）进行模型融合（模型融合是一种策略，目的是将多个模型的预测结果结合起来，以提高整体的预测准确性或性能。这种方法背后的原理基于这样一个假设：不同的模型可能从数据中学习到不同的特征和模式，通过合理地结合这些模型的预测，可以获得比任何单个模型都更好的结果。）,预测聊天机器人对话结果。在一个NLP（自然语言处理）任务上应用了两种不同的方法，最终将这两种方法的预测结果进行加权融合。
 
 1. **环境配置与库导入：** 包括`transformers`, `tokenizers`, `bitsandbytes`, 和`peft`，使用预训练的语言模型和进行文本处理。
 
@@ -31,3 +33,5 @@ Personal Notes
 4. **特征提取与模型预测：** 对于LightGBM部分，用`CountVectorizer`从训练和测试文本中提取特征，然后加载LightGBM模型，对测试集做预测。对于Llama模型，用AutoTokenizer对测试数据做标记化，然后在两个GPU上并行运行模型生成预测。
 
 5. **融合预测结果：** 根据预设的权重将来自LightGBM和Llama模型的预测结果进行了加权融合
+
+
