@@ -31,7 +31,39 @@ Personal Notes
 !pip install -q -U peft --no-index --find-links ../input/llm-detect-pip/
 ```
 2. **数据预处理：** 执行了一个简单的预处理函数process，将多个字符串合并成单个长字符串，并通过添加特定的前缀（如"User prompt"、"Model A"、"Model B"等）对文本进行格式化。
+```python
+import pandas as pd
 
+# 加载测试集
+test = pd.read_csv('/path/to/your/test.csv')
+
+# 预处理函数
+def process(input_str):
+    """
+    处理单条数据。
+    - 去掉字符串列表表示的外层括号。
+    - 将字符串列表中的元素拼接成单一字符串。
+    """
+    if not isinstance(input_str, str):
+        return ""
+    
+    # 去除字符串列表的括号，并根据","分割字符串
+    stripped_str = input_str.strip('[]')
+    sentences = [s.strip('"') for s in stripped_str.split('","')]
+    
+    # 将分割后的字符串列表连接成单一字符串
+    return ' '.join(sentences)
+
+# 调用函数
+test.loc[:, 'prompt'] = test['prompt'].apply(process)
+test.loc[:, 'response_a'] = test['response_a'].apply(process)
+test.loc[:, 'response_b'] = test['response_b'].apply(process)
+
+# 合出来一个整体的长字符串
+test['text'] = 'User prompt: ' + test['prompt'] + '\n\nModel A :\n' + test['response_a'] + '\n\n--------\n\nModel B:\n' + test['response_b']
+
+print(test['text'][0])  
+```
 
 3. **模型加载与配置：** 使用`transformers`库从一个预训练的Llama模型加载了一个用于序列分类的模型配置，并使用`BitsAndBytesConfig`对模型进行了性能优化的配置。为两个不同的GPU配置了两个模型实例，并且加载了预先训练好的权重。
 
