@@ -70,7 +70,7 @@ print(test['text'][0])
 # 加载AutoTokenizer进行文本的标记化
 tokenizer = AutoTokenizer.from_pretrained(MODEL_NAME)
 
-# 配置BitsAndBytes以优化模型加载和计算，实现模型的内存高效处理
+# 配置BitsAndBytes以优化性能
 bnb_config = BitsAndBytesConfig(load_in_8bit=True, bnb_8bit_compute_dtype=torch.float16, bnb_8bit_use_double_quant=False)
 
 # 根据配置和模型路径加载Llama模型
